@@ -29,4 +29,4 @@ URL: http://127.0.0.1:8000/api/metrics?from_date=2017-06-01&to_date=2017-06-01&s
 
 4) Show CPI and spend for Canada (CA) broken down by channel ordered by CPI in descending order. Please think carefully which is an appropriate aggregate function for CPI.
 
-URL: http://127.0.0.1:8000/api/metrics?fsort_direction=desc&sort_field=cpi&group_by=channel,country&country=CA
+URL: http://127.0.0.1:8000/api/metrics?sort_direction=desc&sort_field=cpi&group_by=channel,country&country=CA
