@@ -6,6 +6,5 @@ python-dotenv
 
 # DB
 alembic
-psycopg2-binary
 sqlalchemy
-asyncpg
+aiosqlite

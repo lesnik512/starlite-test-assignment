@@ -1,37 +1,40 @@
-## ---------------------------------------------------------------
-## Quest Manager
-## ---------------------------------------------------------------
 ## Local environment commands:
 ## ---------------------------------------------------------------
 
 .DEFAULT_GOAL := run_tests
 
 ## run:       start app in docker
-run: down
-	docker-compose up
+run:
+	alembic upgrade head
+	uvicorn app.main:app --reload
 
 ## pytest:    run pytest (with down/up migrations before)
 pytest:
-	docker-compose run app ./docker-entrypoint.sh pytest
+	alembic downgrade base
+	alembic upgrade head
+	IS_TESTING="TRUE" pytest -s -vv -x tests/
 
 ## run_tests: run isort, black, pylint, mypy, pytest
 run_tests:
-	docker-compose run app ./docker-entrypoint.sh tests
+	isort -c --diff --settings-file .isort.cfg .
+	black --config pyproject.toml --check .
+	pylint --rcfile=.pylintrc --errors-only app
+	mypy .
+	alembic downgrade base
+	alembic upgrade head
+	IS_TESTING="TRUE" pytest -s -vv tests/
 
 ## migration: create alembic migration
 migration:
-	docker-compose run app alembic revision --autogenerate
+	alembic revision --autogenerate
 
 ## upgrade:   downgrade alembic migrations
 upgrade:
-	docker-compose run app alembic upgrade head
+	alembic upgrade head
 
 ## downgrade: downgrade alembic migrations
 downgrade:
-	docker-compose run app alembic downgrade base
-
-down:
-	docker-compose down --remove-orphans
+	alembic downgrade base
 
 ## ---------------------------------------------------------------
 ## Requirements managing: pip-tools required to be installed and
